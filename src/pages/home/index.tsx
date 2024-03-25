@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react'
 import styles from './home.module.css'
 import { IoMdSearch } from "react-icons/io";
+import { Link, useNavigate } from 'react-router-dom';
 
 // https://sujeitoprogramador.com/api-cripto/?key=e126c792070cf521
 // https://sujeitoprogramador.com/api-cripto/coin/?key=e126c792070cf521&symbol=BTC
@@ -24,13 +24,15 @@ interface DataProps {
 
 export function Home() {
   const [coins, setCoins] = useState<CoinProps[]>([]);
+  const [inputValue, setInputValue] = useState("")
+  const navigate = useNavigate();
 
   useEffect(() => {
     function getData() {
       fetch('https://sujeitoprogramador.com/api-cripto/?key=e126c792070cf521')
       .then(response => response.json())
       .then((data: DataProps) => {
-        let coinsData = data.coins.slice(0, 10)
+        let coinsData = data.coins.slice(0, 15)
 
         let price = Intl.NumberFormat("pt-BR", {
           style: 'currency',
@@ -41,6 +43,7 @@ export function Home() {
           const formated = {
             ...item,
             formatedPrice: price.format(Number(item.price)),
+
             formatedMarket: price.format(Number(item.market_cap)),
           }
           return formated;
@@ -53,12 +56,23 @@ export function Home() {
     getData()
   }, [])  
 
+  function handleSearch(e: FormEvent)  {
+    e.preventDefault()
+    if (inputValue === "") return;
+
+    navigate(`/detail/${inputValue}`)
+  }
+
   return (
     <main className={styles.container}>
-      <form className={styles.form}>
+      <form className={styles.form}
+        onSubmit={handleSearch}
+      >
         <input 
           type="text" 
           placeholder='Digite o simbolo da moeda: BTC...'
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
         <button type='submit'>
           <IoMdSearch size={30} color='#fff' />
@@ -89,7 +103,7 @@ export function Home() {
               <td className={styles.tdLabel} data-label="Preço">
                 {coin.formatedPrice}
               </td>
-              <td className={`${styles.tdVolume} ${Number(coin?.delta_24h) >= 0 ? styles.tdProfit : styles.tdLoss}`} 
+              <td className={`${Number(coin?.delta_24h) >= 0 ? styles.tdProfit : styles.tdLoss}`} 
               data-label="Volume">
                 <span>{coin.delta_24h}</span>
               </td>
