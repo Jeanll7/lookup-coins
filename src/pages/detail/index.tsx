@@ -64,10 +64,29 @@ export function Detail() {
     )
   }
 
+  // Definindo uma função para determinar a classe com base no delta_24h
+  function getDeltaClass(delta_24h: string): string {
+    const deltaValue = Number(delta_24h || '0');
+    return deltaValue >= 0 ? styles.profit :  styles.loss;    
+  }
+
   return (
     <div className={styles.container}>
       <h1 className={styles.center}>{detail?.name}</h1>
       <p className={styles.center}>{detail?.symbol}</p>
+
+      <section className={styles.content}>
+        <p><strong>Preço:</strong> {detail?.formatedPrice}</p>
+        <p><strong>Maior preço 24hs:</strong> {detail?.formatedHighprice}</p>
+        <p><strong>Menor preço 24hs:</strong> {detail?.formatedLowprice}</p>
+        <p>
+          <strong>Delta 24h</strong> 
+          <span className={getDeltaClass(detail?.delta_24h || '')}>
+            {detail?.delta_24h}
+          </span>
+        </p>
+        <p><strong>Valor mercado:</strong> {detail?.formatedMarket}</p>
+    </section>
     </div>
   )
 }
