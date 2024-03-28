@@ -26,10 +26,10 @@
   margin-bottom: 16px;
 }
 
-.profit {
-  color: blue;
+.tdProfit {
+  color: #12f98a;
 }
 
-.loss {
-  color: red;
+.tdLoss {
+  color: #f91257;
 }

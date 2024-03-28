@@ -16,6 +16,7 @@ interface CoinProps {
   market_cap: string;
   formatedPrice: string;
   formatedMarket: string;
+  numberDelta: number;
 }
 
 interface DataProps {
@@ -32,7 +33,7 @@ export function Home() {
       fetch('https://sujeitoprogramador.com/api-cripto/?key=e126c792070cf521')
       .then(response => response.json())
       .then((data: DataProps) => {
-        const coinsData = data.coins.slice(0, 15)
+        const coinsData = data.coins.slice(0, 8)
 
         const price = Intl.NumberFormat("pt-BR", {
           style: 'currency',
@@ -43,12 +44,12 @@ export function Home() {
           const formated = {
             ...item,
             formatedPrice: price.format(Number(item.price)),
-
-            formatedMarket: price.format(Number(item.market_cap)),
+            formatedMarket: price.format(Number(item.market_cap)), 
+            numberDelta: parseFloat(item.delta_24h.replace(",", "."))
           }
           return formated;
         })
-        console.log(formatResult)
+
         setCoins(formatResult);
       })     
     }
@@ -103,9 +104,9 @@ export function Home() {
               <td className={styles.tdLabel} data-label="Preço">
                 {coin.formatedPrice}
               </td>
-              <td className={`${Number(coin?.delta_24h) >= 0 ? styles.tdProfit : styles.tdLoss}`} 
+              <td className={coin.numberDelta >= 0 ? styles.tdProfit : styles.tdLoss} 
               data-label="Volume">
-                <span>{coin.delta_24h}</span>
+                <span>{(coin?.delta_24h)}</span>
               </td>
 
             </tr>
